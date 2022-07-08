@@ -82,4 +82,9 @@ public class InMemorySchoolService implements AbstractSchoolService{
         editionRepo.addEdition(edition);
         return edition;
     }
+
+    @Override
+    public Instructor addInstructor(Instructor instructor) {
+        return null;
+    }
 }

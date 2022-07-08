@@ -18,4 +18,6 @@ public interface AbstractSchoolService {
     void rollBack() throws DataException;
     Iterable<Instructor> getAllInstructors() throws DataException;
     public Edition addEdition (Edition edition) throws DataException;
+
+    public Instructor addInstructor(Instructor instructor) throws DataException;
 }

@@ -49,17 +49,38 @@ public abstract class JDBCQueryTemplate<T> extends JdbcRepository {
         }
     }
 
-    public boolean addOne(String sql, T t) throws DataException {
+    public Optional<T> findByName(String sql, String name) throws DataException {
+        try (
+                Connection con = getConn();
+                PreparedStatement stmt = con.prepareStatement(sql);
+        ) {
+
+            stmt.setString(1, name); //
+            try (ResultSet rset = stmt.executeQuery(sql)) {
+                if (rset.next()) {
+                    return Optional.of(mapItem(rset));
+                } else {
+                    return Optional.empty();
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new DataException("Failed to retrieve data from database", e);
+        }
+    }
+
+
+
+    public List<T> findByIdList(String sql, long id) throws DataException {
         List<T> items = new ArrayList<>();
 
         try (
                 Connection con = getConn();
                 PreparedStatement stmt = con.prepareStatement(sql);
-//                ResultSet rset = stmt.executeQuery(sql);
         ) {
-            //set shit
-            assembleStatement(stmt, t);
-            try (ResultSet rset = stmt.executeQuery(sql)) {
+            stmt.setLong(1, id);
+            try(ResultSet rset = stmt.executeQuery(sql)){
                 while (rset.next()) {
                     items.add(mapItem(rset));
                 }
@@ -69,10 +90,10 @@ public abstract class JDBCQueryTemplate<T> extends JdbcRepository {
             sqe.printStackTrace();
             throw new DataException("Failed to retrieve data from database", sqe);
         }
-        return false;
-
+        return items;
     }
 
+
+
     public abstract T mapItem(ResultSet rset) throws SQLException;
-    public abstract void assembleStatement(PreparedStatement stmt, T t) throws SQLException;
 }

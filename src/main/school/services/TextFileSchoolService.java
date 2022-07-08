@@ -87,6 +87,11 @@ public class TextFileSchoolService implements AbstractSchoolService {
         return edition;
     }
 
+    @Override
+    public Instructor addInstructor(Instructor instructor) {
+        return null;
+    }
+
     private void writeCourseOnFile() throws DataException {
         //br & bw vengono automaticamente chiusi dal try with resources!!!!
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(COURSE_PATH))) {
