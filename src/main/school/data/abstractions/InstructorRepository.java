@@ -15,5 +15,6 @@ public interface InstructorRepository {
     Optional<Instructor> findById(long instructorId);
     Iterable<Instructor> findOlderThanGivenAgeAndMoreThanOneSpecialization(int age);
     void clear ();
+    boolean updateInstructor(Instructor instructor);
 
 }

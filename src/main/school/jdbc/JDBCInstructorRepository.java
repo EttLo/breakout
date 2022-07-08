@@ -97,14 +97,34 @@ public class JDBCInstructorRepository extends JDBCRepository implements Instruct
     @Override
     public Iterable<Instructor> getAll() throws DataException {
         String query = "SELECT *  FROM INSTRUCTOR";
+        String querysec ="SELECT S.NAME FROM INSTRUCTOR_SECTOR ISE JOIN SECTOR S ON(ISE.SECTOR_ID = S.ID) " +
+                "WHERE ISE.INSTRUCTOR_ID = ?;";
+
         try(
                Statement statement = conn.createStatement();
                ResultSet rs = statement.executeQuery(query);
+               PreparedStatement statementsec = conn.prepareStatement(querysec);
         ){
           List<Instructor> instructors = new ArrayList<>();
           while(rs.next()){
-                int 
+              int id = rs.getInt("ID");
+              String name = rs.getString("NAME");
+              String lastName = rs.getString("LASTNAME");
+              LocalDate dob = rs.getDate("DOB").toLocalDate();
+              String email = rs.getString("EMAIL");
+              statementsec.setInt(1, id);
+              List<Sector> sectors = new ArrayList<>();
+
+              try( ResultSet rsSec = statementsec.executeQuery();
+              ){
+                  sectors.clear();
+                  while(rsSec.next()){
+                      sectors.add(Sector.valueOf(rsSec.getString("NAME")));
+                  }
+              }
+              instructors.add(new Instructor(id, name, lastName,dob,email,sectors));
           }
+          return instructors;
         }catch(SQLException e){
             throw new RuntimeException(e);
         }
@@ -112,7 +132,45 @@ public class JDBCInstructorRepository extends JDBCRepository implements Instruct
 
     @Override
     public Optional<Instructor> findById(long instructorId) {
-        return Optional.empty();
+        String query = "SELECT id, name, lastname,email, dob FROM INSTRUCTOR " +
+                "WHERE ID = ?";
+        String querysec ="SELECT S.NAME FROM INSTRUCTOR_SECTOR ISE JOIN SECTOR S ON(ISE.SECTOR_ID = S.ID) " +
+                "WHERE ISE.INSTRUCTOR_ID = ?;";
+        try (
+                PreparedStatement statement = conn.prepareStatement(query);
+                PreparedStatement statementsec = conn.prepareStatement(querysec);
+        ) {
+            statement.setLong(1, instructorId);
+
+            try (
+                    ResultSet rs = statement.executeQuery();
+
+            ) {
+                if (rs.next()) {
+                    int id = rs.getInt("ID");
+                    String name = rs.getString("NAME");
+                    String lastName = rs.getString("LASTNAME");
+                    LocalDate dob = rs.getDate("DOB").toLocalDate();
+                    String email = rs.getString("EMAIL");
+                    statementsec.setInt(1, id);
+                    List<Sector> sectors = new ArrayList<>();
+
+                    try( ResultSet rsSec = statementsec.executeQuery();
+                    ){
+                        sectors.clear();
+                        while(rsSec.next()){
+                            sectors.add(Sector.valueOf(rsSec.getString("NAME")));
+                        }
+                    }
+                   return Optional.of(new Instructor(id, name, lastName,dob,email,sectors));
+                } else {
+                    return Optional.empty();
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -152,10 +210,30 @@ public class JDBCInstructorRepository extends JDBCRepository implements Instruct
                 }
                 return instructors;
             }
-        }catch(SQLException e){
+        }
+        catch(SQLException e){
             throw new RuntimeException(e);
         }
     }
+    @Override
+    public boolean updateInstructor(Instructor instructor){
+        String query = "UPDATE INSTRUCTOR SET NAME = ?, LASTNAME = ?, DOB = ?, EMAIL = ? WHERE ID = ?";
+        try (
+                PreparedStatement statement = conn.prepareStatement(query);
+        ) {
+            statement.setString(1, instructor.getName());
+            statement.setString(2, instructor.getLastname());
+            statement.setDate(3, Date.valueOf(instructor.getDob()));
+            statement.setString(4, instructor.getEmail());
+            statement.setLong(5, instructor.getId());
+
+            int rowsUpdated = statement.executeUpdate();
+            return rowsUpdated > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     @Override
     public void clear() {

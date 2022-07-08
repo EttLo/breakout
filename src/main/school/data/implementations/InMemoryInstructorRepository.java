@@ -73,4 +73,10 @@ public class InMemoryInstructorRepository implements InstructorRepository {
     public void clear() {
         this.repoInstructors.clear();
     }
+
+    @Override
+    public boolean updateInstructor(Instructor instructor) {
+        //va implementato
+        return false;
+    }
 }
