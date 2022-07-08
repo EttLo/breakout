@@ -5,6 +5,7 @@ import main.school.data.abstractions.InstructorRepository;
 import main.school.data.abstractions.JdbcRepository;
 import main.school.model.Instructor;
 
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -24,6 +25,10 @@ public class JdbcInstructorRepository extends JdbcRepository implements Instruct
                 Instructor inst = new Instructor();
                 inst.setId(rset.getLong("ID"));
                 return inst;
+            }
+
+            @Override
+            public void assembleStatement(PreparedStatement stmt, Instructor instructor) {
             }
         };
 
@@ -45,8 +50,26 @@ public class JdbcInstructorRepository extends JdbcRepository implements Instruct
     }
 
     @Override
-    public void addInstructor(Instructor instructor) throws DataException {
+    public void addInstructor(Instructor inst) throws DataException {
 
+        JDBCQueryTemplate<Instructor> template = new JDBCQueryTemplate<>() {
+            @Override
+            public Instructor mapItem(ResultSet rset) throws SQLException {
+                return null;
+            }
+
+            @Override
+            public void assembleStatement(PreparedStatement stmt, Instructor instructor) throws SQLException {
+//                stmt.setLong(1, inst.getId());
+                stmt.setString(2, instructor.getName());
+                stmt.setString(3, instructor.getLastname());
+                stmt.setString(4, instructor.getEmail());
+                java.sql.Date d = Date.valueOf(instructor.getDob());
+                stmt.setDate(5, d);
+//                LocalDate localDate = Date.valueOf("2019-01-10").toLocalDate();
+            }
+        };
+        template.addOne("INSERT INTO INSTRUCTOR (ID, NAME, LASTNAME, EMAIL, DOB) VALUES( ?, ?, ?, ?, ?)", inst);
     }
 
     @Override

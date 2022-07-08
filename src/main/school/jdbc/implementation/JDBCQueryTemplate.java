@@ -2,7 +2,6 @@ package main.school.jdbc.implementation;
 
 import main.school.data.DataException;
 import main.school.data.abstractions.JdbcRepository;
-import main.school.model.Instructor;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -22,8 +21,8 @@ public abstract class JDBCQueryTemplate<T> extends JdbcRepository {
             while (rset.next()) {
                 items.add(mapItem(rset));
             }
-        }
-        catch (SQLException sqe) { sqe.printStackTrace();
+        } catch (SQLException sqe) {
+            sqe.printStackTrace();
             throw new DataException("Failed to retrieve data from database", sqe);
         }
         return items;
@@ -36,11 +35,10 @@ public abstract class JDBCQueryTemplate<T> extends JdbcRepository {
         ) {
 
             stmt.setLong(1, id); //
-            try (ResultSet rset = stmt.executeQuery(sql)){
+            try (ResultSet rset = stmt.executeQuery(sql)) {
                 if (rset.next()) {
                     return Optional.of(mapItem(rset));
-                }
-                else {
+                } else {
                     return Optional.empty();
                 }
             }
@@ -51,7 +49,7 @@ public abstract class JDBCQueryTemplate<T> extends JdbcRepository {
         }
     }
 
-    public boolean addOne(String sql, T t) throws DataException{
+    public boolean addOne(String sql, T t) throws DataException {
         List<T> items = new ArrayList<>();
 
         try (
@@ -60,19 +58,21 @@ public abstract class JDBCQueryTemplate<T> extends JdbcRepository {
 //                ResultSet rset = stmt.executeQuery(sql);
         ) {
             //set shit
-            try (ResultSet rset = stmt.executeQuery(sql)){
+            assembleStatement(stmt, t);
+            try (ResultSet rset = stmt.executeQuery(sql)) {
+                while (rset.next()) {
+                    items.add(mapItem(rset));
+                }
+            }
 
-            }
-            while (rset.next()) {
-                items.add(mapItem(rset));
-            }
-        }
-        catch (SQLException sqe) { sqe.printStackTrace();
+        } catch (SQLException sqe) {
+            sqe.printStackTrace();
             throw new DataException("Failed to retrieve data from database", sqe);
         }
-//        return items;
+        return false;
 
     }
 
-    public abstract T mapItem (ResultSet rset) throws SQLException;
+    public abstract T mapItem(ResultSet rset) throws SQLException;
+    public abstract void assembleStatement(PreparedStatement stmt, T t) throws SQLException;
 }
