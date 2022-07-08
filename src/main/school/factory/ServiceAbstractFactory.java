@@ -1,5 +1,6 @@
 package main.school.factory;
 
+import main.school.data.DataException;
 import main.school.services.AbstractSchoolService;
 
 public abstract class ServiceAbstractFactory {
@@ -17,8 +18,11 @@ public abstract class ServiceAbstractFactory {
         if (type.equals("text")){
             return new TextFileServiceFactory();
         }
+        if(type.equals("database")){
+            return new JDBCServiceFactory();
+        }
         throw new RuntimeException("wrong factory type specified");
     }
 
-    public abstract AbstractSchoolService createSchoolService();
+    public abstract AbstractSchoolService createSchoolService() throws DataException;
 }

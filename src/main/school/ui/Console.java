@@ -22,7 +22,12 @@ public class Console {
         this.schoolService = ss;
     }
     public Console() {
-        this.schoolService = ServiceAbstractFactory.getInstance().createSchoolService();
+        try {
+            this.schoolService = ServiceAbstractFactory.getInstance().createSchoolService();
+        } catch (DataException e) {
+            System.out.println(e.getMessage());
+            System.exit(1);
+        }
     }
 
     public void start (){
@@ -334,18 +339,21 @@ public class Console {
     }
 
     public static void chooseFactories(){
-        System.out.println("Press m or M to record data in memory, F or f to record on a text file.");
+        System.out.println("Press m or M to record data in memory, F or f to record on a text file, D or d to record on database");
         String response = sc.nextLine();
-        while(!(response.equalsIgnoreCase("M") || response.equalsIgnoreCase("F"))) {
+        while(!(response.equalsIgnoreCase("M") || response.equalsIgnoreCase("F") || response.equalsIgnoreCase("D"))) {
             System.out.println("Invalid input, try again!");
             response = sc.nextLine();
         }
         if (response.equalsIgnoreCase("M")) {
             RepositoryAbstractFactory.setType("memory");
             ServiceAbstractFactory.setType("memory");
-        } else {
+        } else if(response.equalsIgnoreCase("F")){
             RepositoryAbstractFactory.setType("memory");
             ServiceAbstractFactory.setType("text");
+        }else{
+            RepositoryAbstractFactory.setType("database");
+            ServiceAbstractFactory.setType("database");
         }
     }
 
