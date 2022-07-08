@@ -12,6 +12,9 @@ public abstract class RepositoryAbstractFactory {
         if(type.equals("memory")){
             return new InMemoryRepositoryFactory();
         }
+        else if (type.equalsIgnoreCase("JDBC")) {
+            return new JDBCRepositoryFactory();
+        }
         return null;
     }
 

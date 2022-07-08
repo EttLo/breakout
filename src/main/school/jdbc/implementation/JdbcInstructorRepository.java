@@ -6,6 +6,7 @@ import main.school.data.abstractions.JdbcRepository;
 import main.school.model.Instructor;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.Optional;
@@ -14,7 +15,28 @@ public class JdbcInstructorRepository extends JdbcRepository implements Instruct
 
     @Override
     public boolean instructorExists(long idInstructor) {
-        return false;
+//        JDBCQueryTemplate<Instructor> template = new JDBCQueryTemplate<>(){
+//
+//        }
+        JDBCQueryTemplate<Instructor> template = new JDBCQueryTemplate<>() {
+            @Override
+            public Instructor mapItem(ResultSet rset) throws SQLException {
+                Instructor inst = new Instructor();
+                inst.setId(rset.getLong("ID"));
+                return inst;
+            }
+        };
+
+        try {
+//            List<String> parameters = new ArrayList<>();
+//            parameters.add(String.valueOf(idInstructor));
+            Optional<Instructor> instructor = template.findById(
+                    "SELECT ID, NAME FROM INSTRUCTOR WHERE ID = ?", idInstructor);
+            return !instructor.isEmpty();
+        } catch (DataException e) {
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
     }
 
     @Override
