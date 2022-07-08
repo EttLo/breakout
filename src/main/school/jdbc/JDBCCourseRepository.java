@@ -2,11 +2,12 @@ package main.school.jdbc;
 
 import main.school.data.DataException;
 import main.school.data.abstractions.CourseRepository;
+import main.school.data.abstractions.JDBCRepository;
 import main.school.model.Course;
 
 import java.util.Optional;
 
-public class JDBCCourseRepository implements CourseRepository {
+public class JDBCCourseRepository extends JDBCRepository implements CourseRepository {
     @Override
     public void addCourse(Course course) throws DataException {
 

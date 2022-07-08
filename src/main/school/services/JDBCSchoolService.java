@@ -37,7 +37,7 @@ public class JDBCSchoolService implements AbstractSchoolService {
             throw new DataException("Error to create connection!", e);
         }
     }
-    public JDBCSchoolService(CourseRepository cr, EditionRepository er, InstructorRepository ir) throws DataException{
+    /*public JDBCSchoolService(CourseRepository cr, EditionRepository er, InstructorRepository ir) throws DataException{
         this.courseRepository = cr;
         this.editionRepository = er;
         this.instructorRepository = ir;
@@ -50,7 +50,7 @@ public class JDBCSchoolService implements AbstractSchoolService {
             e.printStackTrace();
             throw new DataException("Error to create connection!", e);
         }
-    }
+    }*/
     private Connection createConnection() throws SQLException {
         return DriverManager.getConnection(URL);
     }

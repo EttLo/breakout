@@ -2,6 +2,7 @@ package main.school.jdbc;
 
 import main.school.data.DataException;
 import main.school.data.abstractions.EditionRepository;
+import main.school.data.abstractions.JDBCRepository;
 import main.school.model.Edition;
 import main.school.model.Instructor;
 import main.school.model.Level;
@@ -9,7 +10,7 @@ import main.school.model.Sector;
 
 import java.util.Optional;
 
-public class JDBCEditionRepository implements EditionRepository {
+public class JDBCEditionRepository  extends JDBCRepository implements EditionRepository {
     @Override
     public Iterable<Edition> getAll() throws DataException {
         return null;
