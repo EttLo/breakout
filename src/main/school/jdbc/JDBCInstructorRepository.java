@@ -79,11 +79,14 @@ public class JDBCInstructorRepository extends JDBCRepository<Instructor> impleme
 
     @Override
     public void addInstructor(Instructor instructor) throws DataException {
-        String query = "INSERT INTO INSTRUCTOR (ID, NAME, LASTNAME, EMAIL, DOB) VALUES (" +
-                "SELECT MAX(ID) +1 FROM INSTRUCTOR, ?, ?, ?, ?)";
-        String query1 = "INSERT INTO INSTRUCTOR_SECTOR (ID, INSTRUCTOR_ID, SECTOR_ID) VALUES (" +
-                "SELECT MAX(ID) +1 FROM INSTRUCTOR_SECTOR, ?, " +
-                "(SELECT ID FROM SECTOR WHERE NAME = ?))";
+        String query = "INSERT INTO INSTRUCTOR (ID, NAME, LASTNAME, EMAIL, DOB)" +
+                "SELECT MAX(ID)+1, NAME, LASTNAME, EMAIL, DOB" +
+                "FROM INSTRUCTOR" +
+                "WHERE NAME = ? AND LASTNAME = ? AND EMAIL = ? AND DOB = ?";
+        String query1 = "INSERT INTO INSTRUCTOR_SECTOR (ID, INSTRUCTOR_ID, SECTOR_ID)" +
+                " SELECT MAX(ISE.ID)+1, INSTRUCTOR_ID, SECTOR_ID" +
+                " FROM INSTRUCTOR_SECTOR ISE JOIN SECTOR S ON SECTOR_ID = S.ID" +
+                " WHERE S.NAME = ? AND INSTRUCTOR_ID = ?";
         try (
                 PreparedStatement statement = conn.prepareStatement(query);
                 PreparedStatement ps = conn.prepareStatement(query1);
@@ -94,8 +97,9 @@ public class JDBCInstructorRepository extends JDBCRepository<Instructor> impleme
             statement.setDate(4, Date.valueOf(instructor.getDob()));
             statement.execute();
             for (Sector s: instructor.getSpecialization()) {
-                ps.setLong(1, instructor.getId());
-                ps.setString(2, s.name());
+                ps.setString(1, s.name());
+                ps.setLong(2, instructor.getId());
+
             }
         } catch (SQLException e) {
             throw new DataException(e.getMessage(), e);
