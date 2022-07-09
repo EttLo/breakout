@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class JDBCInstructorRepository extends JDBCRepository implements InstructorRepository {
+public class JDBCInstructorRepository extends JDBCRepository<Instructor> implements InstructorRepository {
 
 
     @Override
@@ -34,7 +34,7 @@ public class JDBCInstructorRepository extends JDBCRepository implements Instruct
     }
 
     @Override
-    public Iterable<Instructor> getInstructorsBornAfterDateAndMultiSpecialized(LocalDate date) throws DataException {
+    public Iterable<Instructor> getInstructorsBornAfterDateAndMultiSpecialized(LocalDate date)  {
         String query = "SELECT I.* " +
                 "FROM INSTRUCTOR I JOIN INSTRUCTOR_SECTOR ISE ON (I.ID = ISE.INSTRUCTOR_ID) " +
                 "WHERE I.DOB > ? " +
@@ -72,7 +72,8 @@ public class JDBCInstructorRepository extends JDBCRepository implements Instruct
                 return instructors;
             }
         }catch(SQLException e){
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            return null;
         }
     }
 
@@ -239,4 +240,25 @@ public class JDBCInstructorRepository extends JDBCRepository implements Instruct
     public void clear() {
 
     }
+
+    @Override
+    public List<Object> variableForSecondQuery(ResultSet rset) {
+        return null;
+    }
+
+    @Override
+    public Instructor mapItem(ResultSet rset, List<? extends String> enumList) throws SQLException {
+        long id = rset.getLong("ID");
+        String name = rset.getString("NAME");
+        String lastName = rset.getString("LASTNAME");
+        LocalDate dob = rset.getDate("DOB").toLocalDate();
+        String email = rset.getString("EMAIL");
+        List<Sector> sectors = new ArrayList<>();
+        for (String s: enumList) {
+            sectors.add(Sector.valueOf(s));
+        }
+        return new Instructor(id,name,lastName,dob,email,sectors);
+    }
 }
+
+

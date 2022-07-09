@@ -8,6 +8,9 @@ import main.school.model.Instructor;
 import main.school.model.Level;
 import main.school.model.Sector;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
 import java.util.Optional;
 
 public class JDBCEditionRepository  extends JDBCRepository implements EditionRepository {
@@ -39,5 +42,15 @@ public class JDBCEditionRepository  extends JDBCRepository implements EditionRep
     @Override
     public void clear() {
 
+    }
+
+    @Override
+    public List<Object> variableForSecondQuery(ResultSet rset) {
+        return null;
+    }
+
+    @Override
+    public Object mapItem(ResultSet rset, List enumList) throws SQLException {
+        return null;
     }
 }

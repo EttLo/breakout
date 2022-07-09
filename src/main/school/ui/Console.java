@@ -62,23 +62,28 @@ public class Console {
                     retrieveInstructorByAgeAndMoreThanOneSpecialization();
                     break;
                 case "6":
-                    retrieveInstructorsFromSectorAndLevel();
+                    getInstructorsBornAfterDateAndMultiSpecialized();
                     break;
                 case "7":
-                    assignInstructorToEdition();
+                    retrieveInstructorsFromSectorAndLevel();
                     break;
                 case "8":
-                    addNewCourse();
+                    assignInstructorToEdition();
                     break;
                 case "9":
-                    addNewInstructor();
+                    addNewCourse();
                     break;
                 case "10":
+                    addNewInstructor();
+                    break;
+                case "11":
                     addNewEdition();
+                    break;
+                case "12":
+                    updateInstructor();
                     break;
                 case "exit":
                     return;
-
                 default:
                     System.out.println("Invalid command.");
                     break;
@@ -86,19 +91,20 @@ public class Console {
         }
     }
 
+
     private void menu() {
         System.out.println("Type 0 to show all courses");
         System.out.println("Type 1 to show all instructors");
         System.out.println("Type 2 to show all editions");
         System.out.println("Type 3 to show all editions of a course given its id");
         System.out.println("Type 4 to show all courses that contain a given word in the title");
-        System.out.println("Type 5 to show all instructors born before a certain date and " +
-                "specialised in two sectors");
-        System.out.println("Type 6 to show all instructors that teach in a given sector at a given level");
-        System.out.println("Type 7 to assign an instructor to an edition");
-        System.out.println("Type 8 to add a new course");
-        System.out.println("Type 9 to add a new instructor");
-        System.out.println("Type 10 to add a new edition");
+        System.out.println("Type 5 to show all instructors older than a given age and specialised in at least two sectors");
+        System.out.println("Type 6 to show all instructors born after a certain date and specialised in at least two sectors");
+        System.out.println("Type 7 to show all instructors that teach in a given sector at a given level");
+        System.out.println("Type 8 to assign an instructor to an edition");
+        System.out.println("Type 9 to add a new course");
+        System.out.println("Type 10 to add a new instructor");
+        System.out.println("Type 11 to add a new edition");
         System.out.println("Type exit to close the console");
     }
 
@@ -298,6 +304,11 @@ public class Console {
     }
 
     private void addNewInstructor() throws DataException {
+        Instructor i = getInstructor();
+        schoolService.getInstructorRepository().addInstructor(i);
+        schoolService.commit();
+    }
+    private Instructor getInstructor(){
         System.out.println("Please insert instructor name: ");
         String name = sc.nextLine();
         System.out.println("Please insert instructor last name: ");
@@ -333,9 +344,7 @@ public class Console {
                 System.out.println("You cannot add the same specialization twice!");
             }
         } while (sectorsSet.size() < Sector.values().length);
-        Instructor i = new Instructor(name, lastname, dob, email, new ArrayList<>(sectorsSet));
-        schoolService.getInstructorRepository().addInstructor(i);
-        schoolService.commit();
+        return new Instructor(name, lastname, dob, email, new ArrayList<>(sectorsSet));
     }
 
     public static void chooseFactories(){
@@ -378,6 +387,17 @@ public class Console {
             System.out.println(e.getMessage());
         }
     }
-
+    private void getInstructorsBornAfterDateAndMultiSpecialized() throws DataException {
+        System.out.println("Please insert instructor date of birth ('yyyy-mm-dd' format): ");
+        String dateString = sc.nextLine();
+        LocalDate date = LocalDate.parse(dateString);
+        for (Instructor instructor: schoolService.getInstructorRepository().getInstructorsBornAfterDateAndMultiSpecialized(date)) {
+            System.out.println(instructor);
+        }
+    }
+    private void updateInstructor() {
+        Instructor i = getInstructor();
+        schoolService.getInstructorRepository().updateInstructor(i);
+    }
 
 }
