@@ -18,31 +18,6 @@ public abstract class JDBCRepository<T> {
         this.conn = conn;
     }
 
-
-  /*  try(
-    Statement statement = conn.createStatement();
-    ResultSet rs = statement.executeQuery(query);
-    PreparedStatement statementsec = conn.prepareStatement(querysec);
-        ){
-        List<Instructor> instructors = new ArrayList<>();
-        while(rs.next()){
-            int id = rs.getInt("ID");
-            String name = rs.getString("NAME");
-            String lastName = rs.getString("LASTNAME");
-            LocalDate dob = rs.getDate("DOB").toLocalDate();
-            String email = rs.getString("EMAIL");
-            statementsec.setInt(1, id);
-            List<Sector> sectors = new ArrayList<>();
-
-            try( ResultSet rsSec = statementsec.executeQuery();
-            ){
-                sectors.clear();
-                while(rsSec.next()){
-                    sectors.add(Sector.valueOf(rsSec.getString("NAME")));
-                }
-            }
-            */
-
     public List<T> queryForList(String sql, String sql2, List<Object> typesToSet) throws DataException {
         List<T> items = new ArrayList<>();
         try (
@@ -73,8 +48,27 @@ public abstract class JDBCRepository<T> {
                 sqe.printStackTrace();
             }
             return items;
+    }
+    /*public List<T> queryForList(String sql, List<Object> typesToSet) throws DataException {
+        List<T> items = new ArrayList<>();
+        try (
+                PreparedStatement statement1 = conn.prepareStatement(sql);
+        ) {
+            setPreparedStatement(statement1, typesToSet);
+            try (
+                    ResultSet rset = statement1.executeQuery();
+            ) {
+                while (rset.next()) {
+                        T temp = mapItem(rset,);
+                        items.add(temp);
+                    }
+                }
+            } catch (SQLException sqe) {
+            sqe.printStackTrace();
         }
-    public abstract List<Object> variableForSecondQuery(ResultSet rset);
+        return items;
+    }*/
+    public abstract List<Object> variableForSecondQuery(ResultSet rset) throws DataException;
     public void setPreparedStatement(PreparedStatement ps, List<Object> typesToSet)throws DataException {
         int i = 0;
         for (Object o: typesToSet) {

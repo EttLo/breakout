@@ -79,17 +79,24 @@ public class JDBCInstructorRepository extends JDBCRepository<Instructor> impleme
 
     @Override
     public void addInstructor(Instructor instructor) throws DataException {
-        String query = "INSERT INTO INSTRUCTOR (ID, NAME, LASTNAME, EMAIL, DOB) VALUES (?, ?, ?, ?, ?)";
+        String query = "INSERT INTO INSTRUCTOR (ID, NAME, LASTNAME, EMAIL, DOB) VALUES (" +
+                "SELECT MAX(ID) +1 FROM INSTRUCTOR, ?, ?, ?, ?)";
+        String query1 = "INSERT INTO INSTRUCTOR_SECTOR (ID, INSTRUCTOR_ID, SECTOR_ID) VALUES (" +
+                "SELECT MAX(ID) +1 FROM INSTRUCTOR_SECTOR, ?, " +
+                "(SELECT ID FROM SECTOR WHERE NAME = ?))";
         try (
                 PreparedStatement statement = conn.prepareStatement(query);
+                PreparedStatement ps = conn.prepareStatement(query1);
         ) {
-            statement.setLong(1, instructor.getId());
-            statement.setString(2, instructor.getName());
-            statement.setString(3, instructor.getLastname());
-            statement.setString(4, instructor.getEmail());
-            statement.setDate(5, Date.valueOf(instructor.getDob()));
-
+            statement.setString(1, instructor.getName());
+            statement.setString(2, instructor.getLastname());
+            statement.setString(3, instructor.getEmail());
+            statement.setDate(4, Date.valueOf(instructor.getDob()));
             statement.execute();
+            for (Sector s: instructor.getSpecialization()) {
+                ps.setLong(1, instructor.getId());
+                ps.setString(2, s.name());
+            }
         } catch (SQLException e) {
             throw new DataException(e.getMessage(), e);
         }
@@ -122,6 +129,7 @@ public class JDBCInstructorRepository extends JDBCRepository<Instructor> impleme
                   while(rsSec.next()){
                       sectors.add(Sector.valueOf(rsSec.getString("NAME")));
                   }
+
               }
               instructors.add(new Instructor(id, name, lastName,dob,email,sectors));
           }
@@ -219,16 +227,48 @@ public class JDBCInstructorRepository extends JDBCRepository<Instructor> impleme
     @Override
     public boolean updateInstructor(Instructor instructor){
         String query = "UPDATE INSTRUCTOR SET NAME = ?, LASTNAME = ?, DOB = ?, EMAIL = ? WHERE ID = ?";
+        String query1 = "INSERT INTO INSTRUCTOR_SECTOR (ID, INSTRUCTOR_ID, SECTOR_ID)" +
+                "SELECT MAX(ISE.ID)+1, INSTRUCTOR_ID, SECTOR_ID" +
+                "FROM INSTRUCTOR_SECTOR ISE JOIN SECTOR S ON SECTOR_ID = S.ID" +
+                "WHERE S.NAME = ? AND INSTRUCTOR_ID = ?";
+        String query2 = "DELETE FROM INSTRUCTOR_SECTOR WHERE INSTRUCTOR_ID = ? AND SECTOR_ID IN " +
+                "(SELECT ID FROM SECTOR WHERE NAME NOT IN ?)";
+        String query3 ="SELECT DISTINCT S.NAME FROM INSTRUCTOR_SECTOR ISE JOIN SECTOR S ON (S.ID = ISE.SECTOR_ID)";
         try (
                 PreparedStatement statement = conn.prepareStatement(query);
+                PreparedStatement statement1 = conn.prepareStatement(query1);
+                PreparedStatement statement2 = conn.prepareStatement(query2);
+                PreparedStatement statement3 = conn.prepareStatement(query3);
         ) {
             statement.setString(1, instructor.getName());
             statement.setString(2, instructor.getLastname());
             statement.setDate(3, Date.valueOf(instructor.getDob()));
             statement.setString(4, instructor.getEmail());
             statement.setLong(5, instructor.getId());
+            List<Sector> sectors = instructor.getSpecialization();
+            String sectorToString = "('GIANCARLO','";
+            for (Sector s: sectors) {
+                sectorToString += s.name() + "','";
+            }
+            sectorToString = sectorToString.substring(0, sectorToString.length() - 2);
+            sectorToString += ")";
+            statement2.setLong(1, instructor.getId());
+            statement2.setString(2, sectorToString);
 
             int rowsUpdated = statement.executeUpdate();
+            int rowsUpdate2 = statement2.executeUpdate();
+            ResultSet rs3 = statement3.executeQuery();
+            List<String> povero = new ArrayList<>();
+            while(rs3.next()){
+                povero.add(rs3.getString("NAME"));
+            }
+            for (Sector s: sectors) {
+                if(povero.contains(s.name())){
+                    statement1.setString(1, s.name());
+                    statement1.setLong(2, instructor.getId());
+                    int rowsUpdate1 = statement1.executeUpdate();
+                }
+            }
             return rowsUpdated > 0;
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -242,8 +282,14 @@ public class JDBCInstructorRepository extends JDBCRepository<Instructor> impleme
     }
 
     @Override
-    public List<Object> variableForSecondQuery(ResultSet rset) {
-        return null;
+    public List<Object> variableForSecondQuery(ResultSet rset) throws DataException {
+       List<Object> variable = new ArrayList<>();
+        try {
+            variable.add(rset.getInt("ID"));
+        } catch (SQLException e) {
+            throw new DataException(e.getMessage(), e);
+        }
+        return variable;
     }
 
     @Override
