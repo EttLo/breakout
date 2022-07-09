@@ -45,7 +45,7 @@ public class JDBCEditionRepository  extends JDBCRepository implements EditionRep
     }
 
     @Override
-    public List<Object> variableForSecondQuery(ResultSet rset) {
+    public List<Object> variableForSecondQuery(ResultSet rs) {
         return null;
     }
 

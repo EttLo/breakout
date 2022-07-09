@@ -12,8 +12,8 @@ public interface InstructorRepository {
     Iterable<Instructor> getInstructorsBornAfterDateAndMultiSpecialized(LocalDate date) throws DataException;
     void addInstructor(Instructor instructor) throws DataException;
     Iterable<Instructor> getAll() throws DataException;
-    Optional<Instructor> findById(long instructorId);
-    Iterable<Instructor> findOlderThanGivenAgeAndMoreThanOneSpecialization(int age);
+    Optional<Instructor> findById(long instructorId) throws DataException;
+    Iterable<Instructor> findOlderThanGivenAgeAndMoreThanOneSpecialization(int age) throws DataException;
     void clear ();
     boolean updateInstructor(Instructor instructor);
 

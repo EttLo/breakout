@@ -73,7 +73,7 @@ public class JDBCCourseRepository extends JDBCRepository implements CourseReposi
     }
 
     @Override
-    public List<Object> variableForSecondQuery(ResultSet rset) {
+    public List<Object> variableForSecondQuery(ResultSet rs) {
         return null;
     }
 

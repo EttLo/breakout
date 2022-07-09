@@ -9,7 +9,6 @@ import java.util.List;
 public abstract class JDBCRepository<T> {
     protected Connection conn;
 
-
     public Connection getConn() {
         return conn;
     }
@@ -18,34 +17,34 @@ public abstract class JDBCRepository<T> {
         this.conn = conn;
     }
 
-    public List<T> queryForList(String sql, String sql2, List<Object> typesToSet) throws DataException {
+    public List<T> queryForList(String sql, String sql2, List<Object> typesList) throws DataException {
         List<T> items = new ArrayList<>();
         try (
                 PreparedStatement statement1 = conn.prepareStatement(sql);
                 PreparedStatement statement2 = conn.prepareStatement(sql2);
         ) {
-            setPreparedStatement(statement1, typesToSet);
+            setPreparedStatement(statement1, typesList);
             try (
-                    ResultSet rset = statement1.executeQuery();
+                    ResultSet rs1 = statement1.executeQuery();
             ) {
-                while (rset.next()) {
-                    List secondTypeToSet = variableForSecondQuery(rset);
-                    setPreparedStatement(statement2, secondTypeToSet);
+                while (rs1.next()) {
+                    List secondTypesList = variableForSecondQuery(rs1);
+                    setPreparedStatement(statement2, secondTypesList);
                     List<String> enumList = new ArrayList<>();
                     try(
-                            ResultSet renum = statement2.executeQuery();
+                            ResultSet rs2 = statement2.executeQuery();
                     ){
                         enumList.clear();
-                        while(renum.next()){
-                            enumList.add(renum.getString("NAME"));
+                        while(rs2.next()){
+                            enumList.add(rs2.getString("NAME"));
                         }
-                        T temp = mapItem(rset, enumList);
+                        T temp = mapItem(rs1, enumList);
                         items.add(temp);
                     }
                 }
             }
-            } catch (SQLException sqe) {
-                sqe.printStackTrace();
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
             return items;
     }
@@ -68,8 +67,7 @@ public abstract class JDBCRepository<T> {
         }
         return items;
     }*/
-    public abstract List<Object> variableForSecondQuery(ResultSet rset) throws DataException;
-    public void setPreparedStatement(PreparedStatement ps, List<Object> typesToSet)throws DataException {
+    public void setPreparedStatement(PreparedStatement ps, List<Object> typesToSet) throws DataException {
         int i = 0;
         for (Object o: typesToSet) {
             try {
@@ -78,9 +76,10 @@ public abstract class JDBCRepository<T> {
             } catch (SQLException e) {
                 throw new DataException(e.getMessage(), e);
             }
-
         }
     }
-    public abstract T mapItem(ResultSet rset, List<? extends String> enumList) throws SQLException;
+
+    public abstract List<Object> variableForSecondQuery(ResultSet rs) throws DataException;
+    public abstract T mapItem(ResultSet rset, List<String> enumList) throws SQLException;
 
 }
