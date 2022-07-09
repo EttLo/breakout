@@ -50,7 +50,7 @@ public class JDBCEditionRepository  extends JDBCRepository implements EditionRep
     }
 
     @Override
-    public Object mapItem(ResultSet rset, List enumList) throws SQLException {
+    public Object mapItem(ResultSet rs, List enumList) throws SQLException {
         return null;
     }
 }

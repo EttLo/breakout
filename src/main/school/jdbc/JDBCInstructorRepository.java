@@ -43,7 +43,7 @@ public class JDBCInstructorRepository extends JDBCRepository<Instructor> impleme
                 "WHERE ISE.INSTRUCTOR_ID = ?;";
         List<Object> typesToSet = new ArrayList<>();
         typesToSet.add(Date.valueOf(date));
-        List<Instructor> instructors = queryForList(query, querysec, typesToSet);
+        List<Instructor> instructors = queriesForList(query, querysec, typesToSet);
         return instructors;
         /*
         try(
@@ -99,7 +99,7 @@ public class JDBCInstructorRepository extends JDBCRepository<Instructor> impleme
         typesToSet.add(instructor.getLastname());
         typesToSet.add(instructor.getEmail());
         typesToSet.add(Date.valueOf(instructor.getDob()));
-        queryForList(query1, query2, typesToSet);
+        queriesForList(query1, query2, typesToSet);
         // problem with second query input
         //variableForSecondQuery only takes the instructor id and doesn't provide s.name
          */
@@ -127,10 +127,10 @@ public class JDBCInstructorRepository extends JDBCRepository<Instructor> impleme
 
     @Override
     public Iterable<Instructor> getAll() throws DataException {
-        String query = "SELECT *  FROM INSTRUCTOR";
+        String query = "SELECT * FROM INSTRUCTOR;";
         String querysec ="SELECT S.NAME FROM INSTRUCTOR_SECTOR ISE JOIN SECTOR S ON(ISE.SECTOR_ID = S.ID) " +
                 "WHERE ISE.INSTRUCTOR_ID = ?;";
-        List<Instructor> instructors = queryForList(query, querysec, new ArrayList<>());
+        List<Instructor> instructors = queriesForList(query, querysec, new ArrayList<>());
         return instructors;
 
         /*
@@ -174,7 +174,7 @@ public class JDBCInstructorRepository extends JDBCRepository<Instructor> impleme
         String querysec ="SELECT S.NAME FROM INSTRUCTOR_SECTOR ISE JOIN SECTOR S ON (ISE.SECTOR_ID = S.ID) " +
                 "WHERE ISE.INSTRUCTOR_ID = ?;";
         List<Object> typesToSet = new ArrayList<>();
-        List<Instructor> instructors = queryForList(query, querysec, typesToSet);
+        List<Instructor> instructors = queriesForList(query, querysec, typesToSet);
         Optional<Instructor> instructor = instructors.size() == 0 ? Optional.empty() : Optional.of(instructors.get(0));
         return instructor;
         /*
@@ -189,7 +189,7 @@ public class JDBCInstructorRepository extends JDBCRepository<Instructor> impleme
 
             ) {
                 if (rs.next()) {
-                    int id = rs.getInt("ID");
+                    long id = rs.getLong("ID");
                     String name = rs.getString("NAME");
                     String lastName = rs.getString("LASTNAME");
                     LocalDate dob = rs.getDate("DOB").toLocalDate();
@@ -228,7 +228,7 @@ public class JDBCInstructorRepository extends JDBCRepository<Instructor> impleme
                 "WHERE ISE.INSTRUCTOR_ID = ?;";
         List<Object> typesToSet = new ArrayList<>();
         typesToSet.add(age);
-        List<Instructor> instructors = queryForList(query, querysec, typesToSet);
+        List<Instructor> instructors = queriesForList(query, querysec, typesToSet);
         return instructors;
         /*
         try(

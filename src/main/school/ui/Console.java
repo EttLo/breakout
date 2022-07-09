@@ -293,7 +293,7 @@ public class Console {
         }
     }
 
-    private void retrieveInstructorByAgeAndMoreThanOneSpecialization() {
+    private void retrieveInstructorByAgeAndMoreThanOneSpecialization() throws DataException {
         System.out.println("How old should the instructor be, at the very least?");
         int age = sc.nextInt();
         sc.nextLine();

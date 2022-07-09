@@ -3,17 +3,17 @@ package main.school.model;
 public class Course {
     private long id;
     private String title;
-    private int hours;
+    private int duration;
     private Sector sector;
     private Level level;
 
-    public Course(String title, int hours, Sector sector, Level level) {
-        this (0L, title, hours, sector, level);
+    public Course(String title, int duration, Sector sector, Level level) {
+        this (0L, title, duration, sector, level);
     }
-    public Course (long id , String title, int hours, Sector sector, Level level) {
+    public Course (long id , String title, int duration, Sector sector, Level level) {
         this.id = id;
         this.title = title;
-        this.hours = hours;
+        this.duration = duration;
         this.sector = sector;
         this.level = level;
     }
@@ -23,7 +23,7 @@ public class Course {
 
     @Override
     public String toString() {
-        return "Id: " + id + " Title: " + title + " Duration: " + hours + " Sector: " + sector.name() + " Level: "
+        return "Id: " + id + " Title: " + title + " Duration: " + duration + " Sector: " + sector.name() + " Level: "
                 + level.name();
     }
 
@@ -44,12 +44,12 @@ public class Course {
         this.title = title;
     }
 
-    public int getHours() {
-        return hours;
+    public int getDuration() {
+        return duration;
     }
 
-    public void setHours(int hours) {
-        this.hours = hours;
+    public void setDuration(int duration) {
+        this.duration = duration;
     }
 
     public Sector getSector() {

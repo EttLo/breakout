@@ -6,7 +6,7 @@ import main.school.model.Sector;
 
 public class CourseUtils {
     public static String toTextLine(Course c) {
-        return String.format("%d,%s,%d,%s,%s",c.getId(), c.getTitle(),c.getHours(),c.getSector().
+        return String.format("%d,%s,%d,%s,%s",c.getId(), c.getTitle(),c.getDuration(),c.getSector().
                                               name(), c.getLevel().name());
     }
     public static Course fromTextLine (String line) {

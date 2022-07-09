@@ -17,7 +17,8 @@ public abstract class JDBCRepository<T> {
         this.conn = conn;
     }
 
-    public List<T> queryForList(String sql, String sql2, List<Object> typesList) throws DataException {
+    //use for methods with two queries, the second being dependent on the output of the first
+    public List<T> queriesForList(String sql, String sql2, List<Object> typesList) throws DataException {
         List<T> items = new ArrayList<>();
         try (
                 PreparedStatement statement1 = conn.prepareStatement(sql);
@@ -48,7 +49,10 @@ public abstract class JDBCRepository<T> {
             }
             return items;
     }
-    /*public List<T> queryForList(String sql, List<Object> typesToSet) throws DataException {
+
+    //use for methods with only one query
+    /*
+    public List<T> queryForList(String sql, List<Object> typesToSet) throws DataException {
         List<T> items = new ArrayList<>();
         try (
                 PreparedStatement statement1 = conn.prepareStatement(sql);
@@ -66,7 +70,10 @@ public abstract class JDBCRepository<T> {
             sqe.printStackTrace();
         }
         return items;
-    }*/
+    }
+
+     */
+
     public void setPreparedStatement(PreparedStatement ps, List<Object> typesToSet) throws DataException {
         int i = 0;
         for (Object o: typesToSet) {
@@ -80,6 +87,6 @@ public abstract class JDBCRepository<T> {
     }
 
     public abstract List<Object> variableForSecondQuery(ResultSet rs) throws DataException;
-    public abstract T mapItem(ResultSet rset, List<String> enumList) throws SQLException;
+    public abstract T mapItem(ResultSet rs, List<String> enumList) throws SQLException;
 
 }
