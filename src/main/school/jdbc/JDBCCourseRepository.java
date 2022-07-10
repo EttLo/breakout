@@ -161,6 +161,7 @@ public class JDBCCourseRepository extends JDBCRepository<Course> implements Cour
             updateStatement.setString(4, course.getTitle());
             updateStatement.setLong(5, course.getId());
             String sectorName = course.getSector().name();
+            selectStatement.setString(1,sectorName);
             int sectorId = 0;
             try(ResultSet rs = selectStatement.executeQuery();) {
                 while(rs.next()) {
@@ -180,13 +181,24 @@ public class JDBCCourseRepository extends JDBCRepository<Course> implements Cour
     }
 
     @Override
-    public List<Object> variableForSecondQuery(ResultSet rs) {
-        return null;
+    public List<Object> variableForSecondQuery(ResultSet rs) throws DataException {
+        List<Object> variable = new ArrayList<>();
+        try {
+            variable.add(rs.getString("NAME")); //da nome ricava id
+        } catch (SQLException e) {
+            throw new DataException(e.getMessage(), e);
+        }
+        return variable;
     }
 
     @Override
     public Course mapItem(ResultSet rs, List<String> enumList) throws SQLException {
-        return null;
+        long id = rs.getLong("ID");
+        String title = rs.getString("TITLE");
+        int duration = rs.getInt("DURATION");
+        String sectorName = rs.getString("NAME"); //controllare
+        String courseLevel = rs.getString("COURSE_LEVEL");
+        return new Course(id, title, duration, Sector.valueOf(sectorName), Level.valueOf(courseLevel));
     }
 
 

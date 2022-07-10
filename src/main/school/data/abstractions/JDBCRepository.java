@@ -37,7 +37,7 @@ public abstract class JDBCRepository<T> {
                     ){
                         enumList.clear();
                         while(rs2.next()){
-                            enumList.add(rs2.getString("NAME"));
+                            enumList.add(rs2.getString("NAME")); //abstract this
                         }
                         T temp = mapItem(rs1, enumList);
                         items.add(temp);

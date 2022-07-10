@@ -16,6 +16,9 @@ import java.util.Optional;
 public class JDBCEditionRepository  extends JDBCRepository implements EditionRepository {
     @Override
     public Iterable<Edition> getAll() throws DataException {
+        String query1 = "SELECT ID, COURSE_ID, START_DATE, END_DATE, COST, INSTRUCTOR_ID FROM EDITION;";
+        String queryCourse = "";
+        String queryInstructor = "";
         return null;
     }
 

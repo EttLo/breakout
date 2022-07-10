@@ -15,6 +15,6 @@ public interface InstructorRepository {
     Optional<Instructor> findById(long instructorId) throws DataException;
     Iterable<Instructor> findOlderThanGivenAgeAndMoreThanOneSpecialization(int age) throws DataException;
     void clear ();
-    boolean updateInstructor(Instructor instructor);
+    boolean updateInstructor(Instructor instructor) throws DataException;
 
 }
