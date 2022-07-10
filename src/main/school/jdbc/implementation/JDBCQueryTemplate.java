@@ -28,6 +28,8 @@ public abstract class JDBCQueryTemplate<T> extends JdbcRepository {
         return items;
     }
 
+
+
     public Optional<T> findById(String sql, long id) throws DataException {
         try (
                 Connection con = getConn();

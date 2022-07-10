@@ -2,6 +2,7 @@ package main.school.services;
 
 import main.school.data.DataException;
 import main.school.data.abstractions.*;
+import main.school.factory.RepositoryAbstractFactory;
 import main.school.model.*;
 
 import java.sql.Connection;
@@ -18,6 +19,15 @@ public class JdbcSchoolService implements AbstractSchoolService {
 
     private Connection conn;
 
+    public JdbcSchoolService() throws DataException {
+        var factory = RepositoryAbstractFactory.getInstance();
+        this.courseRepository = factory.createCourseRepository();
+        this.editionRepository = factory.createEditionRepository();
+        this.instructorRepository = factory.createInstructorRepository();
+        this.sectorRepository = factory.createSectorRepository();
+        setConnectionOnRepositories();
+    }
+
     public JdbcSchoolService (CourseRepository cr, EditionRepository er,
                               InstructorRepository ir, SectorRepository sr)
             throws DataException{
@@ -25,6 +35,10 @@ public class JdbcSchoolService implements AbstractSchoolService {
         this.editionRepository = er;
         this.instructorRepository = ir;
         this.sectorRepository = sr;
+        setConnectionOnRepositories();
+    }
+
+    private void setConnectionOnRepositories() throws DataException {
         try {
             this.conn = createConnection();
             this.conn.setAutoCommit(false);
@@ -37,6 +51,7 @@ public class JdbcSchoolService implements AbstractSchoolService {
             throw new DataException("Error to create connection!", e);
         }
     }
+
     private Connection createConnection() throws SQLException {
         return DriverManager.getConnection(URL);
     }

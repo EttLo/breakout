@@ -3,20 +3,30 @@ package main.school.factory;
 import main.school.data.abstractions.CourseRepository;
 import main.school.data.abstractions.EditionRepository;
 import main.school.data.abstractions.InstructorRepository;
+import main.school.data.abstractions.SectorRepository;
+import main.school.jdbc.implementation.JdbcCourseRepository;
+import main.school.jdbc.implementation.JdbcEditionRepository;
+import main.school.jdbc.implementation.JdbcInstructorRepository;
+import main.school.jdbc.implementation.JdbcSectorRepository;
 
 public class JDBCRepositoryFactory extends RepositoryAbstractFactory {
     @Override
     public CourseRepository createCourseRepository() {
-        return null;
+        return new JdbcCourseRepository();
     }
 
     @Override
     public EditionRepository createEditionRepository() {
-        return null;
+        return new JdbcEditionRepository();
     }
 
     @Override
     public InstructorRepository createInstructorRepository() {
-        return null;
+        return new JdbcInstructorRepository();
+    }
+
+    @Override
+    public SectorRepository createSectorRepository() {
+        return new JdbcSectorRepository();
     }
 }

@@ -5,7 +5,7 @@ import java.time.Period;
 import java.util.List;
 import java.util.Objects;
 
-public class Instructor {
+public class Instructor implements WithID {
     private long id;
     private String name;
     private String lastname;
