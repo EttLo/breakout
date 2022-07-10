@@ -15,7 +15,6 @@ public class JDBCServiceFactory extends ServiceAbstractFactory{
             System.out.println(e.getMessage());
             System.exit(1);
             return null;
-
         }
     }
 }

@@ -11,6 +11,8 @@ public abstract class RepositoryAbstractFactory {
     public static RepositoryAbstractFactory getInstance(){
         if(type.equals("memory")){
             return new InMemoryRepositoryFactory();
+        } else if (type.equals("database")) {
+            return new JDBCRepositoryFactory();
         }
         return null;
     }

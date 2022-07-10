@@ -1,4 +1,4 @@
-package main.school.jdbc;
+package main.school.data.jdbc;
 
 import main.school.data.DataException;
 import main.school.data.abstractions.InstructorRepository;

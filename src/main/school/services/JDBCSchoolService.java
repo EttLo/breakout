@@ -15,7 +15,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class JDBCSchoolService implements AbstractSchoolService {
-    public static final String URL = "jdbc:oracle:thin:SCHOOL/school@localhost:1521/XEPDB1";
+    public static final String URL = "jdbc:oracle:thin:CODESCHOOL/codeschool@localhost:1521/XEPDB1";
     private CourseRepository courseRepository;
     private EditionRepository editionRepository;
     private InstructorRepository instructorRepository;
@@ -27,6 +27,7 @@ public class JDBCSchoolService implements AbstractSchoolService {
         this.courseRepository = factory.createCourseRepository();
         this.editionRepository = factory.createEditionRepository();
         this.instructorRepository = factory.createInstructorRepository();
+        //setConnectionOnRepositories();
         try {
             this.conn = createConnection();
             ((JDBCRepository) this.courseRepository).setConn(this.conn);
@@ -34,9 +35,15 @@ public class JDBCSchoolService implements AbstractSchoolService {
             ((JDBCRepository) this.instructorRepository).setConn(this.conn);
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new DataException("Error to create connection!", e);
+            throw new DataException("Error in creating the connection", e);
         }
     }
+
+    /*
+    private void setConnectionOnRepositories() {}
+     */
+
+
     /*public JDBCSchoolService(CourseRepository cr, EditionRepository er, InstructorRepository ir) throws DataException{
         this.courseRepository = cr;
         this.editionRepository = er;
@@ -80,7 +87,7 @@ public class JDBCSchoolService implements AbstractSchoolService {
             this.conn.commit();
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new DataException("Error to commit!", e);
+            throw new DataException("Error in commit", e);
         }
     }
 
@@ -90,7 +97,7 @@ public class JDBCSchoolService implements AbstractSchoolService {
             this.conn.rollback();
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new DataException("Error to rollback!", e);
+            throw new DataException("Error in rollback", e);
         }
     }
 
