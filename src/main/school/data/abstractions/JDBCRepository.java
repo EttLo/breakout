@@ -51,7 +51,7 @@ public abstract class JDBCRepository<T> {
     }
 
     public void setPreparedStatement(PreparedStatement ps, List<Object> typesToSet) throws DataException {
-        int i = 0;
+        int i = 1;
         for (Object o: typesToSet) {
             try {
                 ps.setObject(i, o);
