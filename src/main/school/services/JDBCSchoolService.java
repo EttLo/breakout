@@ -5,6 +5,9 @@ import main.school.data.abstractions.CourseRepository;
 import main.school.data.abstractions.EditionRepository;
 import main.school.data.abstractions.InstructorRepository;
 import main.school.data.abstractions.JDBCRepository;
+import main.school.data.jdbc.JDBCCourseRepository;
+import main.school.data.jdbc.JDBCEditionRepository;
+import main.school.data.jdbc.JDBCInstructorRepository;
 import main.school.factory.RepositoryAbstractFactory;
 import main.school.model.Edition;
 import main.school.model.EntityNotFoundException;
@@ -27,7 +30,7 @@ public class JDBCSchoolService implements AbstractSchoolService {
         this.courseRepository = factory.createCourseRepository();
         this.editionRepository = factory.createEditionRepository();
         this.instructorRepository = factory.createInstructorRepository();
-        //setConnectionOnRepositories();
+        setConnectionOnRepositories();
         try {
             this.conn = createConnection();
             ((JDBCRepository) this.courseRepository).setConn(this.conn);
@@ -39,9 +42,19 @@ public class JDBCSchoolService implements AbstractSchoolService {
         }
     }
 
-    /*
-    private void setConnectionOnRepositories() {}
-     */
+    private void setConnectionOnRepositories() throws DataException {
+        try {
+            this.conn = createConnection();
+            this.conn.setAutoCommit(false);
+            ((JDBCCourseRepository) this.courseRepository).setConn(this.conn);
+            ((JDBCEditionRepository) this.editionRepository).setConn(this.conn);
+            ((JDBCInstructorRepository) this.instructorRepository).setConn(this.conn);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new DataException("Error in creating connection!", e);
+        }
+    }
+
 
 
     /*public JDBCSchoolService(CourseRepository cr, EditionRepository er, InstructorRepository ir) throws DataException{
