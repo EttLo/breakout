@@ -22,10 +22,10 @@ public class JDBCEditionRepository  extends JDBCRepository<Edition> implements E
                 "I.ID AS INSTRUCTOR_ID, I.NAME AS INSTRUCTOR_NAME, LAST_NAME, DOB, EMAIL " +
                 "FROM EDITION E JOIN COURSE C ON E.COURSE_ID = C.ID " +
                 "JOIN INSTRUCTOR I ON E.INSTRUCTOR_ID = I.ID " +
-                "JOIN SECTOR S ON C.SECTOR_ID = S.ID;";
+                "JOIN SECTOR S ON C.SECTOR_ID = S.ID";
         String querysec = "SELECT S.NAME AS SECTOR_NAME FROM INSTRUCTOR_SECTOR ISE " +
                 "JOIN SECTOR S ON (ISE.SECTOR_ID = S.ID) " +
-                "WHERE ISE.INSTRUCTOR_ID = ?;";
+                "WHERE ISE.INSTRUCTOR_ID = ?";
         return queriesForList(query, querysec, new ArrayList<>());
     }
 
@@ -35,10 +35,10 @@ public class JDBCEditionRepository  extends JDBCRepository<Edition> implements E
                 "FROM INSTRUCTOR I JOIN EDITION E ON I.ID = E.INSTRUCTOR_ID " +
                 "JOIN COURSE C ON C.ID = E.COURSE_ID " +
                 "JOIN SECTOR S ON S.ID = C.SECTOR_ID " +
-                "WHERE C.COURSE_LEVEL = ? AND S.NAME = ?;";
+                "WHERE C.COURSE_LEVEL = ? AND S.NAME = ?";
         String querysec = "SELECT S.NAME AS SECTOR_NAME FROM INSTRUCTOR_SECTOR ISE " +
                 "JOIN SECTOR S ON (ISE.SECTOR_ID = S.ID) " +
-                "WHERE ISE.INSTRUCTOR_ID = ?;";
+                "WHERE ISE.INSTRUCTOR_ID = ?";
         String sectorName = sector.name();
         String courseLevel = level.name();
 
@@ -80,7 +80,7 @@ public class JDBCEditionRepository  extends JDBCRepository<Edition> implements E
         String query = "INSERT INTO EDITION (ID, COURSE_ID, START_DATE, END_DATE, COST, INSTRUCTOR_ID) " +
                 "SELECT MAX(ID)+1, COURSE_ID, START_DATE, END_DATE, COST, INSTRUCTOR_ID " +
                 "FROM EDITION WHERE COURSE_ID = ? AND START_DATE = ? AND END_DATE = ? " +
-                "AND COST = ? AND INSTRUCTOR_ID = ?;";
+                "AND COST = ? AND INSTRUCTOR_ID = ?";
         long courseId = edition.getCourse().getId();
         long instructorId = edition.getInstructor().getId();
 
@@ -107,10 +107,10 @@ public class JDBCEditionRepository  extends JDBCRepository<Edition> implements E
                 "FROM EDITION E JOIN COURSE C ON E.COURSE_ID = C.ID " +
                 "JOIN INSTRUCTOR I ON E.INSTRUCTOR_ID = I.ID " +
                 "JOIN SECTOR S ON C.SECTOR_ID = S.ID " +
-                "WHERE COURSE_ID = ?;";
+                "WHERE COURSE_ID = ?";
         String querysec = "SELECT S.NAME AS SECTOR_NAME FROM INSTRUCTOR_SECTOR ISE " +
                 "JOIN SECTOR S ON (ISE.SECTOR_ID = S.ID) " +
-                "WHERE ISE.INSTRUCTOR_ID = ?;";
+                "WHERE ISE.INSTRUCTOR_ID = ?";
         List<Object> typesToSet = new ArrayList<>();
         typesToSet.add(courseId);
         return queriesForList(query, querysec, typesToSet);
@@ -124,10 +124,10 @@ public class JDBCEditionRepository  extends JDBCRepository<Edition> implements E
                 "FROM EDITION E JOIN COURSE C ON E.COURSE_ID = C.ID " +
                 "JOIN INSTRUCTOR I ON E.INSTRUCTOR_ID = I.ID " +
                 "JOIN SECTOR S ON C.SECTOR_ID = S.ID " +
-                "WHERE E.ID = ?;";
+                "WHERE E.ID = ?";
         String querysec = "SELECT S.NAME AS SECTOR_NAME FROM INSTRUCTOR_SECTOR ISE " +
                 "JOIN SECTOR S ON (ISE.SECTOR_ID = S.ID) " +
-                "WHERE ISE.INSTRUCTOR_ID = ?;";
+                "WHERE ISE.INSTRUCTOR_ID = ?";
         List<Object> typesToSet = new ArrayList<>();
         typesToSet.add(editionId);
         List<Edition> editions = queriesForList(query, querysec, typesToSet);
