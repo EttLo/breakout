@@ -13,7 +13,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
-public class JDBCEditionRepository  extends JDBCRepository implements EditionRepository {
+public class JDBCEditionRepository  extends JDBCRepository<Edition> implements EditionRepository {
     @Override
     public Iterable<Edition> getAll() throws DataException {
         String query1 = "SELECT ID, COURSE_ID, START_DATE, END_DATE, COST, INSTRUCTOR_ID FROM EDITION;";
@@ -53,7 +53,7 @@ public class JDBCEditionRepository  extends JDBCRepository implements EditionRep
     }
 
     @Override
-    public Object mapItem(ResultSet rs, List enumList) throws SQLException {
+    public Edition mapItem(ResultSet rs, List enumList) throws SQLException {
         return null;
     }
 }

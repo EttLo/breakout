@@ -60,8 +60,8 @@ public class InMemoryCourseRepository implements CourseRepository {
     }
 
     @Override
-    public Optional<Course> findByID(long idCourse) {
-        Course found = repoCourses.get(idCourse);
+    public Optional<Course> findByID(long courseId) {
+        Course found = repoCourses.get(courseId);
         return found == null ? Optional.empty() : Optional.of(found);
     }
 

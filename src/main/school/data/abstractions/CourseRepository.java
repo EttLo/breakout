@@ -10,6 +10,6 @@ public interface CourseRepository {
     void addCourse(Course course)throws DataException;
     Iterable<Course> getCoursesByTitleLike(String title) throws DataException;
     Iterable<Course> getAll(boolean orderByTitle) throws DataException;
-    Optional<Course> findByID(long idCourse);
+    Optional<Course> findByID(long courseId) throws DataException;
     void clear();
 }
