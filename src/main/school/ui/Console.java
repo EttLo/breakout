@@ -100,7 +100,7 @@ public class Console {
         System.out.println("Type 4 to show all courses that contain a given word in the title");
         System.out.println("Type 5 to show all instructors older than a given age and specialised in at least two sectors");
         System.out.println("Type 6 to show all instructors born after a certain date and specialised in at least two sectors");
-        System.out.println("Type 7 to show all instructors that teach in a given sector at a given level");
+        System.out.println("Type 7 to show all instructors that teach in a given sector at a given level (or higher)");
         System.out.println("Type 8 to assign an instructor to an edition");
         System.out.println("Type 9 to add a new course");
         System.out.println("Type 10 to add a new instructor");
@@ -395,7 +395,7 @@ public class Console {
             System.out.println(instructor);
         }
     }
-    private void updateInstructor() {
+    private void updateInstructor() throws DataException {
         Instructor i = getInstructor();
         schoolService.getInstructorRepository().updateInstructor(i);
     }

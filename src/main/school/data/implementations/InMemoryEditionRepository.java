@@ -43,9 +43,9 @@ public class InMemoryEditionRepository implements EditionRepository {
     }
 
     @Override
-    public List<Edition> getEditionsFromCourseId(long idCourse) throws DataException {
+    public List<Edition> getEditionsFromCourseId(long courseId) throws DataException {
         return repoEditions.values().stream()
-                             .filter(e -> e.getCourse().getId()== idCourse)
+                             .filter(e -> e.getCourse().getId()== courseId)
                              .toList();
         /*
         List<Edition> editionsOfCourse = new ArrayList<>();
@@ -59,8 +59,8 @@ public class InMemoryEditionRepository implements EditionRepository {
     }
 
     @Override
-    public Optional<Edition> findEditionById(long courseEditionId) {
-        Edition ce = repoEditions.get(courseEditionId);
+    public Optional<Edition> findEditionById(long editionId) {
+        Edition ce = repoEditions.get(editionId);
         return ce!=null?Optional.of(ce):Optional.empty();
     }
 

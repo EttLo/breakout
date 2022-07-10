@@ -16,7 +16,7 @@ public class JDBCInstructorRepository extends JDBCRepository<Instructor> impleme
 
     @Override
     public boolean instructorExists(long idInstructor) {
-        String query = "SELECT *  FROM INSTRUCTOR WHERE ID = ?";
+        String query = "SELECT *  FROM INSTRUCTOR WHERE ID = ?;";
         try(
             PreparedStatement statement = conn.prepareStatement(query);
             ){
@@ -34,17 +34,16 @@ public class JDBCInstructorRepository extends JDBCRepository<Instructor> impleme
 
     @Override
     public Iterable<Instructor> getInstructorsBornAfterDateAndMultiSpecialized(LocalDate date) throws DataException {
-        String query = "SELECT I.* " +
+        String query = "SELECT I.ID, I.NAME, I.LAST_NAME, I.EMAIL, I.DOB " +
                 "FROM INSTRUCTOR I JOIN INSTRUCTOR_SECTOR ISE ON (I.ID = ISE.INSTRUCTOR_ID) " +
                 "WHERE I.DOB > ? " +
-                "GROUP BY I.ID, I.NAME, I.LASTNAME, I.EMAIL, I.DOB" +
+                "GROUP BY I.ID, I.NAME, I.LAST_NAME, I.EMAIL, I.DOB " +
                 "HAVING COUNT (ISE.SECTOR_ID) > 1;";
         String querysec ="SELECT S.NAME " + "FROM INSTRUCTOR_SECTOR ISE JOIN SECTOR S ON(ISE.SECTOR_ID = S.ID) " +
                 "WHERE ISE.INSTRUCTOR_ID = ?;";
         List<Object> typesToSet = new ArrayList<>();
         typesToSet.add(Date.valueOf(date));
-        List<Instructor> instructors = queriesForList(query, querysec, typesToSet);
-        return instructors;
+        return queriesForList(query, querysec, typesToSet);
         /*
         try(
                 PreparedStatement statement = conn.prepareStatement(query);
@@ -59,7 +58,7 @@ public class JDBCInstructorRepository extends JDBCRepository<Instructor> impleme
                 while(rs.next()){
                     int id = rs.getInt("ID");
                     String name = rs.getString("NAME");
-                    String lastName = rs.getString("LASTNAME");
+                    String lastName = rs.getString("LAST_NAME");
                     LocalDate dob = rs.getDate("DOB").toLocalDate();
                     String email = rs.getString("EMAIL");
                     statementsec.setInt(1, id);
@@ -85,14 +84,14 @@ public class JDBCInstructorRepository extends JDBCRepository<Instructor> impleme
 
     @Override
     public void addInstructor(Instructor instructor) throws DataException {
-        String query1 = "INSERT INTO INSTRUCTOR (ID, NAME, LASTNAME, EMAIL, DOB)" +
-                "SELECT MAX(ID)+1, NAME, LASTNAME, EMAIL, DOB" +
-                "FROM INSTRUCTOR" +
-                "WHERE NAME = ? AND LASTNAME = ? AND EMAIL = ? AND DOB = ?";
-        String query2 = "INSERT INTO INSTRUCTOR_SECTOR (ID, INSTRUCTOR_ID, SECTOR_ID)" +
-                " SELECT MAX(ISE.ID)+1, INSTRUCTOR_ID, SECTOR_ID" +
-                " FROM INSTRUCTOR_SECTOR ISE JOIN SECTOR S ON SECTOR_ID = S.ID" +
-                " WHERE S.NAME = ? AND INSTRUCTOR_ID = ?";
+        String query1 = "INSERT INTO INSTRUCTOR (ID, NAME, LAST_NAME, EMAIL, DOB) " +
+                "SELECT MAX(ID)+1, NAME, LAST_NAME, EMAIL, DOB " +
+                "FROM INSTRUCTOR " +
+                "WHERE NAME = ? AND LAST_NAME = ? AND EMAIL = ? AND DOB = ?;";
+        String query2 = "INSERT INTO INSTRUCTOR_SECTOR (ID, INSTRUCTOR_ID, SECTOR_ID) " +
+                " SELECT MAX(ISE.ID)+1, INSTRUCTOR_ID, SECTOR_ID " +
+                " FROM INSTRUCTOR_SECTOR ISE JOIN SECTOR S ON SECTOR_ID = S.ID " +
+                " WHERE S.NAME = ? AND INSTRUCTOR_ID = ?;";
         try (
                 PreparedStatement statement = conn.prepareStatement(query1);
                 PreparedStatement ps = conn.prepareStatement(query2);
@@ -105,7 +104,6 @@ public class JDBCInstructorRepository extends JDBCRepository<Instructor> impleme
             for (Sector s: instructor.getSpecialization()) {
                 ps.setString(1, s.name());
                 ps.setLong(2, instructor.getId());
-
             }
         } catch (SQLException e) {
             throw new DataException(e.getMessage(), e);
@@ -116,11 +114,10 @@ public class JDBCInstructorRepository extends JDBCRepository<Instructor> impleme
 
     @Override
     public Iterable<Instructor> getAll() throws DataException {
-        String query = "SELECT ID, NAME, LASTNAME, EMAIL, DOB FROM INSTRUCTOR;";
+        String query = "SELECT ID, NAME, LAST_NAME, EMAIL, DOB FROM INSTRUCTOR;";
         String querysec ="SELECT S.NAME FROM INSTRUCTOR_SECTOR ISE JOIN SECTOR S ON (ISE.SECTOR_ID = S.ID) " +
                 "WHERE ISE.INSTRUCTOR_ID = ?;";
-        List<Instructor> instructors = queriesForList(query, querysec, new ArrayList<>());
-        return instructors;
+        return queriesForList(query, querysec, new ArrayList<>());
 
         /*
         try(
@@ -132,7 +129,7 @@ public class JDBCInstructorRepository extends JDBCRepository<Instructor> impleme
           while(rs.next()){
               int id = rs.getInt("ID");
               String name = rs.getString("NAME");
-              String lastName = rs.getString("LASTNAME");
+              String lastName = rs.getString("LAST_NAME");
               LocalDate dob = rs.getDate("DOB").toLocalDate();
               String email = rs.getString("EMAIL");
               statementsec.setInt(1, id);
@@ -158,7 +155,7 @@ public class JDBCInstructorRepository extends JDBCRepository<Instructor> impleme
 
     @Override
     public Optional<Instructor> findById(long instructorId) throws DataException {
-        String query = "SELECT ID, NAME, LASTNAME, EMAIL, DOB FROM INSTRUCTOR " +
+        String query = "SELECT ID, NAME, LAST_NAME, EMAIL, DOB FROM INSTRUCTOR " +
                 "WHERE ID = ?;";
         String querysec ="SELECT S.NAME FROM INSTRUCTOR_SECTOR ISE JOIN SECTOR S ON (ISE.SECTOR_ID = S.ID) " +
                 "WHERE ISE.INSTRUCTOR_ID = ?;";
@@ -181,7 +178,7 @@ public class JDBCInstructorRepository extends JDBCRepository<Instructor> impleme
                 if (rs.next()) {
                     long id = rs.getLong("ID");
                     String name = rs.getString("NAME");
-                    String lastName = rs.getString("LASTNAME");
+                    String lastName = rs.getString("LAST_NAME");
                     LocalDate dob = rs.getDate("DOB").toLocalDate();
                     String email = rs.getString("EMAIL");
                     statementsec.setInt(1, id);
@@ -209,17 +206,16 @@ public class JDBCInstructorRepository extends JDBCRepository<Instructor> impleme
 
     @Override
     public Iterable<Instructor> findOlderThanGivenAgeAndMoreThanOneSpecialization(int age) throws DataException {
-        String query = "SELECT I.* " +
+        String query = "SELECT I.ID, I.NAME, I.LAST_NAME, I.EMAIL, I.DOB " +
                 "FROM INSTRUCTOR I JOIN INSTRUCTOR_SECTOR ISE ON (I.ID = ISE.INSTRUCTOR_ID) " +
                 "WHERE CURRENT_DATE < add_months(I.DOB, 12 * ?) " +
-                "GROUP BY I.ID, I.NAME, I.LASTNAME, I.EMAIL, I.DOB" +
+                "GROUP BY I.ID, I.NAME, I.LAST_NAME, I.EMAIL, I.DOB " +
                 "HAVING COUNT (ISE.SECTOR_ID) > 1;";
         String querysec ="SELECT S.NAME " + "FROM INSTRUCTOR_SECTOR ISE JOIN SECTOR S ON(ISE.SECTOR_ID = S.ID) " +
                 "WHERE ISE.INSTRUCTOR_ID = ?;";
         List<Object> typesToSet = new ArrayList<>();
         typesToSet.add(age);
-        List<Instructor> instructors = queriesForList(query, querysec, typesToSet);
-        return instructors;
+        return queriesForList(query, querysec, typesToSet);
         /*
         try(
                 PreparedStatement statement = conn.prepareStatement(query);
@@ -233,7 +229,7 @@ public class JDBCInstructorRepository extends JDBCRepository<Instructor> impleme
                 while(rs.next()){
                     int id = rs.getInt("ID");
                     String name = rs.getString("NAME");
-                    String lastName = rs.getString("LASTNAME");
+                    String lastName = rs.getString("LAST_NAME");
                     LocalDate dob = rs.getDate("DOB").toLocalDate();
                     String email = rs.getString("EMAIL");
                     statementsec.setInt(1, id);
@@ -259,8 +255,8 @@ public class JDBCInstructorRepository extends JDBCRepository<Instructor> impleme
 
     @Override
     public boolean updateInstructor(Instructor instructor) throws DataException {
-        String updateQuery = "UPDATE INSTRUCTOR SET NAME = ?, LASTNAME = ?, DOB = ?, EMAIL = ? WHERE ID = ?;";
-        String insertQuery = "INSERT INTO INSTRUCTOR_SECTOR (ID, INSTRUCTOR_ID, SECTOR_ID)" +
+        String updateQuery = "UPDATE INSTRUCTOR SET NAME = ?, LAST_NAME = ?, DOB = ?, EMAIL = ? WHERE ID = ?;";
+        String insertQuery = "INSERT INTO INSTRUCTOR_SECTOR (ID, INSTRUCTOR_ID, SECTOR_ID) " +
                 "SELECT MAX(ISE.ID)+1, INSTRUCTOR_ID, SECTOR_ID " +
                 "FROM INSTRUCTOR_SECTOR ISE JOIN SECTOR S ON SECTOR_ID = S.ID " +
                 "WHERE S.NAME = ? AND INSTRUCTOR_ID = ?;";
@@ -336,15 +332,16 @@ public class JDBCInstructorRepository extends JDBCRepository<Instructor> impleme
     public Instructor mapItem(ResultSet rs, List<String> enumList) throws SQLException {
         long id = rs.getLong("ID");
         String name = rs.getString("NAME");
-        String lastName = rs.getString("LASTNAME");
+        String lastName = rs.getString("LAST_NAME");
         LocalDate dob = rs.getDate("DOB").toLocalDate();
         String email = rs.getString("EMAIL");
         List<Sector> sectors = new ArrayList<>();
         for (String s: enumList) {
             sectors.add(Sector.valueOf(s));
         }
-        return new Instructor(id,name,lastName,dob,email,sectors);
+        return new Instructor(id, name, lastName, dob, email, sectors);
     }
+
 }
 
 

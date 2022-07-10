@@ -23,7 +23,6 @@ public class JDBCCourseRepository extends JDBCRepository<Course> implements Cour
                 "FROM COURSE C JOIN SECTOR S ON C.SECTOR_ID = S.ID " +
                 "WHERE C.ID = ? AND TITLE = ? AND DURATION = ? AND S.NAME = ? AND COURSE_LEVEL = ?;";
 
-
         try (
                 PreparedStatement statement = conn.prepareStatement(query);
         ) {
@@ -36,7 +35,6 @@ public class JDBCCourseRepository extends JDBCRepository<Course> implements Cour
         } catch (SQLException e) {
             throw new DataException(e.getMessage(), e);
         }
-
 
     }
 
@@ -88,11 +86,11 @@ public class JDBCCourseRepository extends JDBCRepository<Course> implements Cour
 
     @Override
     public Iterable<Course> getAll(boolean orderByTitle) throws DataException {
-        String query = "SELECT ID, TITLE, DURATION, SECTOR_ID, COURSE_LEVEL FROM COURSE";
+        String query = "SELECT ID, TITLE, DURATION, SECTOR_ID, COURSE_LEVEL FROM COURSE ";
         if(orderByTitle) {
-            query = query + " ORDER BY TITLE;";
+            query = query + "ORDER BY TITLE;";
         }
-        String querysec = "SELECT NAME FROM SECTOR WHERE ID = ?";
+        String querysec = "SELECT NAME FROM SECTOR WHERE ID = ?;";
         List<Course> courses = queriesForList(query, querysec, new ArrayList<>());
         return courses;
 
@@ -129,7 +127,7 @@ public class JDBCCourseRepository extends JDBCRepository<Course> implements Cour
     @Override
     public Optional<Course> findByID(long courseId) throws DataException {
         String query = "SELECT ID, TITLE, DURATION, SECTOR_ID, COURSE_LEVEL FROM COURSE WHERE ID = ?;";
-        String querysec = "SELECT NAME FROM SECTOR WHERE ID = ?";
+        String querysec = "SELECT NAME FROM SECTOR WHERE ID = ?;";
         List<Object> typesToSet = new ArrayList<>();
         typesToSet.add(courseId);
         List<Course> courses = queriesForList(query, querysec, typesToSet);
@@ -169,8 +167,8 @@ public class JDBCCourseRepository extends JDBCRepository<Course> implements Cour
 
 
     public boolean updateCourse(Course course) throws DataException {
-        String query = "UPDATE COURSE SET TITLE = ?, DURATION = ?, SECTOR_ID = ?, COURSE_LEVEL = ? WHERE ID = ?";
-        String querysec = "SELECT ID FROM SECTOR WHERE NAME = ?";
+        String query = "UPDATE COURSE SET TITLE = ?, DURATION = ?, SECTOR_ID = ?, COURSE_LEVEL = ? WHERE ID = ?;";
+        String querysec = "SELECT ID FROM SECTOR WHERE NAME = ?;";
 
         try(
                 PreparedStatement updateStatement = conn.prepareStatement(query);
@@ -220,6 +218,5 @@ public class JDBCCourseRepository extends JDBCRepository<Course> implements Cour
         String courseLevel = rs.getString("COURSE_LEVEL");
         return new Course(id, title, duration, Sector.valueOf(enumList.get(0)), Level.valueOf(courseLevel));
     }
-
 
 }
