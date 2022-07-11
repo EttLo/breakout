@@ -1,6 +1,8 @@
 package main.school.model;
 
-public class Course {
+import main.school.data.abstractions.WithId;
+
+public class Course implements WithId {
     private long id;
     private String title;
     private int duration;

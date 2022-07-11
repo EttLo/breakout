@@ -1,11 +1,13 @@
 package main.school.model;
 
+import main.school.data.abstractions.WithId;
+
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
 import java.util.Objects;
 
-public class Instructor {
+public class Instructor implements WithId {
     private long id;
     private String name;
     private String lastname;

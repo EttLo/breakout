@@ -200,6 +200,11 @@ public class JDBCCourseRepository extends JDBCRepository<Course> implements Cour
     }
 
     @Override
+    public void assembleCreateStatement(Course entity, PreparedStatement ps) {
+
+    }
+
+    @Override
     public List<Object> variableForSecondQuery(ResultSet rs) throws DataException {
         List<Object> variable = new ArrayList<>();
         try {
@@ -217,6 +222,11 @@ public class JDBCCourseRepository extends JDBCRepository<Course> implements Cour
         int duration = rs.getInt("DURATION");
         String courseLevel = rs.getString("COURSE_LEVEL");
         return new Course(id, title, duration, Sector.valueOf(enumList.get(0)), Level.valueOf(courseLevel));
+    }
+
+    @Override
+    public Course mapObject(ResultSet rs) throws SQLException {
+        return null;
     }
 
 }

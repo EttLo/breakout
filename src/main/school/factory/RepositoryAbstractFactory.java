@@ -3,6 +3,7 @@ package main.school.factory;
 import main.school.data.abstractions.CourseRepository;
 import main.school.data.abstractions.EditionRepository;
 import main.school.data.abstractions.InstructorRepository;
+import main.school.data.abstractions.SectorRepository;
 
 public abstract class RepositoryAbstractFactory {
 
@@ -24,5 +25,5 @@ public abstract class RepositoryAbstractFactory {
     public abstract CourseRepository createCourseRepository();
     public abstract EditionRepository createEditionRepository();
     public abstract InstructorRepository createInstructorRepository();
-
+    public abstract SectorRepository createSectorRepository();
 }

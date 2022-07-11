@@ -1,8 +1,10 @@
 package main.school.model;
 
+import main.school.data.abstractions.WithId;
+
 import java.time.LocalDate;
 
-public class Edition {
+public class Edition implements WithId {
     private long id;
     private Course course;
     private LocalDate startDate;

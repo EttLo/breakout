@@ -60,6 +60,11 @@ public class TextFileSchoolService implements AbstractSchoolService {
     }
 
     @Override
+    public Optional<Instructor> findInstructorById(long id) throws DataException {
+        return this.instructorRepo.findById(id);
+    }
+
+    @Override
     public void addOrReplaceInstructorInEdition(long editionId, long instructorID) throws DataException, EntityNotFoundException {
 
     }

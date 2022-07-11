@@ -48,6 +48,11 @@ public class InMemorySchoolService implements AbstractSchoolService{
     }
 
     @Override
+    public Optional<Instructor> findInstructorById(long id) throws DataException {
+        return this.instructorRepo.findById(id);
+    }
+
+    @Override
     public void addOrReplaceInstructorInEdition(long editionId, long instructorID) throws DataException, EntityNotFoundException {
         Optional<Edition> oce = editionRepo.findEditionById(editionId);
         if(oce.isEmpty()) {

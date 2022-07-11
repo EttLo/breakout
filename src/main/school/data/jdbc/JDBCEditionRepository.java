@@ -141,6 +141,11 @@ public class JDBCEditionRepository  extends JDBCRepository<Edition> implements E
     }
 
     @Override
+    public void assembleCreateStatement(Edition entity, PreparedStatement ps) {
+
+    }
+
+    @Override
     public List<Object> variableForSecondQuery(ResultSet rs) throws DataException {
         List<Object> variable = new ArrayList<>();
         try {
@@ -178,6 +183,11 @@ public class JDBCEditionRepository  extends JDBCRepository<Edition> implements E
         LocalDate endDate = rs.getDate("END_DATE").toLocalDate();
         double cost = rs.getDouble("COST");
         return new Edition(id, course, startDate, endDate, cost, instructor);
+    }
+
+    @Override
+    public Edition mapObject(ResultSet rs) throws SQLException {
+        return null;
     }
 
 }

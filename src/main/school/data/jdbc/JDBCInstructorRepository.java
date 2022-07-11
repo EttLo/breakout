@@ -16,7 +16,7 @@ public class JDBCInstructorRepository extends JDBCRepository<Instructor> impleme
 
     @Override
     public boolean instructorExists(long idInstructor) {
-        String query = "SELECT *  FROM INSTRUCTOR WHERE ID = ?";
+        String query = "SELECT ID FROM INSTRUCTOR WHERE ID = ?";
         try(
             PreparedStatement statement = conn.prepareStatement(query);
             ){
@@ -78,8 +78,8 @@ public class JDBCInstructorRepository extends JDBCRepository<Instructor> impleme
             e.printStackTrace();
             return null;
         }
+*/
 
-         */
     }
 
     @Override
@@ -151,6 +151,15 @@ public class JDBCInstructorRepository extends JDBCRepository<Instructor> impleme
         }
 
          */
+    }
+
+
+    public Optional<Instructor> findByIdWithoutSpecialization(long instructorId) throws DataException {
+        String query = "SELECT ID, NAME, LAST_NAME, EMAIL, DOB FROM INSTRUCTOR WHERE ID = ?";
+        String querysec ="SELECT S.NAME FROM INSTRUCTOR_SECTOR ISE JOIN SECTOR S ON (ISE.SECTOR_ID = S.ID) " +
+                "WHERE ISE.INSTRUCTOR_ID = ?";
+        Optional<Instructor> instructor = queryForObject(query, instructorId);
+        return instructor;
     }
 
     @Override
@@ -339,6 +348,22 @@ public class JDBCInstructorRepository extends JDBCRepository<Instructor> impleme
             sectors.add(Sector.valueOf(s));
         }
         return new Instructor(id, name, lastName, dob, email, sectors);
+    }
+
+    //returns an Instructor without specializations
+    @Override
+    public Instructor mapObject(ResultSet rs) throws SQLException {
+        long id = rs.getLong("ID");
+        String name = rs.getString("NAME");
+        String lastName = rs.getString("LAST_NAME");
+        LocalDate dob = rs.getDate("DOB").toLocalDate();
+        String email = rs.getString("EMAIL");
+        return new Instructor(id, name, lastName, dob, email, new ArrayList<Sector>());
+    }
+
+    @Override
+    public void assembleCreateStatement(Instructor entity, PreparedStatement ps) {
+
     }
 
 }

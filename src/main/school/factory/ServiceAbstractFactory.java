@@ -10,7 +10,7 @@ public abstract class ServiceAbstractFactory {
         ServiceAbstractFactory.type = type;
     }
 
-    public static  ServiceAbstractFactory getInstance(){
+    public static ServiceAbstractFactory getInstance(){
 
         if (type.equals("memory")){
             return new InMemoryServiceFactory();
